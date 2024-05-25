@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import cors from '../../../lib/cors';
 
-export async function handle(req: NextRequest) {
+async function handle(req: NextRequest) {
   let authKey = process.env.VOICE_API_KEY;
   let baseUrl = process.env.VOICE_BASE_URL;
   if (!authKey || !baseUrl) {

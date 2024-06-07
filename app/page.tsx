@@ -19,7 +19,26 @@ import { useEffect, useMemo, useState } from "react";
 import "@livekit/components-styles";
 import "@livekit/components-styles/prefabs";
 
+function useViewportHeight() {
+  useEffect(() => {
+    const setVH = () => {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    };
+
+    setVH();
+
+    window.addEventListener('resize', setVH);
+    window.addEventListener('orientationchange', setVH);
+
+    return () => {
+      window.removeEventListener('resize', setVH);
+      window.removeEventListener('orientationchange', setVH);
+    };
+  }, []);
+}
+
 export default function Home() {
+  useViewportHeight()
   const codec = "h264";
   const [liveKitUrl, setLiveKitUrl] = useState(
     process.env.NEXT_PUBLIC_LIVEKIT_URL,
@@ -154,7 +173,7 @@ function MyVideoConference() {
     { onlySubscribed: true },
   );
   return (
-    <GridLayout tracks={tracks} style={{ height: 'calc(100vh - var(--lk-control-bar-height))' }}>
+    <GridLayout tracks={tracks} style={{ height: 'calc(var(--vh) * 100 - var(--lk-control-bar-height))' }}>
       {/* The GridLayout accepts zero or one child. The child is used
       as a template to render all passed in tracks. */}
       <ParticipantTile />

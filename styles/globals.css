@@ -68,3 +68,7 @@ h2 a {
 h2 a {
   text-decoration: none;
 }
+
+:root {
+  --vh: 100%;
+}

@@ -1,19 +1,20 @@
 "use client";
 
 import {
-  formatChatMessageLinks,
-  LiveKitRoom,
+  ControlBar,
+  formatChatMessageLinks, GridLayout,
+  LiveKitRoom, ParticipantTile, RoomAudioRenderer, useTracks,
   VideoConference,
-} from "@livekit/components-react";
+} from '@livekit/components-react';
 import {
   AudioPresets,
   ExternalE2EEKeyProvider,
   Room,
   RoomConnectOptions,
-  RoomOptions,
+  RoomOptions, Track,
   VideoCodec,
   VideoPresets,
-} from "livekit-client";
+} from 'livekit-client';
 import { useEffect, useMemo, useState } from "react";
 import "@livekit/components-styles";
 import "@livekit/components-styles/prefabs";
@@ -121,13 +122,42 @@ export default function Home() {
           connectOptions={connectOptions}
           serverUrl={liveKitUrl}
           audio={true}
-          video={false}
         >
-          <VideoConference chatMessageFormatter={formatChatMessageLinks} />
+          <MyVideoConference/>
+          <RoomAudioRenderer />
+          <ControlBar controls={{
+            microphone:true,
+            leave:true,
+            settings:false,
+            camera:true,
+            screenShare:false
+          }}/>
         </LiveKitRoom>
       ) : (
-        <h2>{msg}</h2>
+        <main data-lk-theme="default">
+          <div>
+            <h2>{msg}</h2>
+          </div>
+        </main>
       )}
     </main>
+  );
+}
+
+function MyVideoConference() {
+  // `useTracks` returns all camera and screen share tracks. If a user
+  // joins without a published camera track, a placeholder track is returned.
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true }
+    ],
+    { onlySubscribed: true },
+  );
+  return (
+    <GridLayout tracks={tracks} style={{ height: 'calc(100vh - var(--lk-control-bar-height))' }}>
+      {/* The GridLayout accepts zero or one child. The child is used
+      as a template to render all passed in tracks. */}
+      <ParticipantTile />
+    </GridLayout>
   );
 }

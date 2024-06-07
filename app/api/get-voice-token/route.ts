@@ -18,7 +18,7 @@ async function handle(req: NextRequest) {
     duplex: 'half',
     body: req.body,
   };
-  let resp = await fetch(`${baseUrl}/v1/voice/get_token`, fetchOptions);
+  let resp = await fetch(`${baseUrl}/voice/get_token`, fetchOptions);
   let result = await resp.json();
   result.url = process.env.NEXT_PUBLIC_LIVEKIT_URL;
   return cors(
